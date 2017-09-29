@@ -7,98 +7,88 @@
 #include <sys/fcntl.h>
 #include <time.h>
 
-char *msg = "Hello world";
 int main()
 {
 	pid_t pid1,pid2,pid3;//process
-	int p1[2],p2[2],p3[2],p4[2];//pipe
-	char inbuf1[128];
-	char inbuf2[128];
-	char inbuf3[128];
-	char inbuf4[128];
+	int p1[2],p2[2],p3,p4[2];//pipe
+	File *fpmessage;
+	File *fpparent;
+	File *fpc1;
+	File *fpc2;
+	File *fpc3;
+	time_t currentTime;
 	
-	if((pid1 = fork())==-1)
-	exit(0); 
 	
-	//create pipe 1 
-	if((pipe(p1)) == -1)
-	exit(0);
+	char inbuf[128];
+	int num;
 	
-	close(p1[0]);
-	write(p1[1],msg,128);
-	close(p1[1]);
-	
-	if(pid1 == 0)
-	{
-		printf("run if\n");
-		//create process 2 
-		pid2 = fork();
-		pipe(p2);
-		
-		//read from parent pipe p1 
-		close(p1[1]);
-		close(p2[0]);
-		while(read(p1[0],inbuf1,128)!=0)
-		    {
-				printf("PID1 %s\n",inbuf1);
-				//write to pipe 2 
-				write(p2[1],inbuf1,128);
-				close(p2[1]);
-		    }
-		    close(p1[0]);
-				exit(0);
-	}//end process1 if 
-		else if(pid2==0)
+	if(pipe(p1)==-1)
 		{
-			//create process 3 
-			pid3 = fork();
-			pipe(p3);
-			
-			close(p2[1]);
-			close(p3[0]);
-			
-		while(read(p2[0],inbuf2,128)!=0)
-		    {
-				printf("PID2 %s", inbuf2);
-				//write to pipe 3 
-				write(p3[1],inbuf2,128);
-			
-		    }
-							
+			pirntf("Couldn't create pipe 1\n");
 			exit(0);
-		}//end process2 if
-		
-		else if(pid3==0)
-		{
-			pipe(p4);
-			close(p3[1]);
-			close(p4[0]);
-		while(read(p2[0],inbuf3,128)!=0)
-		    {
-				printf("PID3 %s", inbuf3);
-				//write to pipe 3 
-				write(p4[1],inbuf3,128);
-		    }	
-			exit(0);
-		}//end process 3 if
-
+		}
 	
+	pid1 = fork();
+	
+	if(pid1 == 0){
+		//child 1 process
+		
+		
+	   exit(0);//terminate child 1 
+	}
 	else{
 		//parent process
+		fp1 = fopen("message.txt","r");
+		if(fp1 == -1){
+			printf("File can't open\n");
+			eixt(0);
+		}
+		close(p1[0]);
+		while(!feof(fpmessage){
+			fgets(inbuf,128,fpmessage);
+			printf("%s",inbuf);
+			write(p1[1],inbuf,128);
+		}//end while
+		fclose(fpmessage);
+		close(p1[1]);
+		
 		wait(&pid1);
 		wait(&pid2);
+		
+		pid3 = fork();
+		mkfifo("pipe3",0660);
+		if(pipe(p4) ==-1){
+			printf("Can't create pipe 4");
+			exit(0);
+		}
 		wait(&pid3);
-		
-		close(p1[0]);
 		close(p4[1]);
+		while((read(p4[0],inbuf,128)!=0)
+		{
+			printf("%s\n",inbuf);
+			sscanf(inbuf,"%d\t&s",&num,inbuf);
+			printf("d\n",num);
+			printf("%s\n",inbuf);
+			if(num == 4)
+			{
+				fopen = ("fpparent","w");
+				if(fopen == -1){
+					printf("file fail");
+					exit(0);
+				}
+				
+				currentTime = time(NULL);
+				fprintf(fpparent,"%s\t%s\tkeep\n",asctime(localtime(&currentTime)),inbuf);
+				fflush(fpparent);			
+			}
+			else{
+				printf("%s\n",inbuf);
+				printf("Message left error");
+			}
+		}//end while for writing log in parent 
 		
-		while(read(p4[0],inbuf4,128)!=0)
-		    {
-				printf("PID parent %s",inbuf4);
-		    }	
-		
-	}
+	}//end else for parent process
 	
-	return 0;
-}
+	
+}//end main 
 
