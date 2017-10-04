@@ -37,7 +37,7 @@ int main()
                         //child 2 process detection
                         if (pid3 == 0){
                                 //child 3 process
-                        //      close p1[1], p1[0], p3[1], p4[0];
+                                close p1[1], p1[0], p3[1], p4[0];
                                 fpc3 = fopen("child3log.txt","w");
                                 p3 = open("mypipe", O_RDONLY);
                                 while (read(p3,inbuf, 128) >0) {
@@ -53,13 +53,13 @@ int main()
                                                 fflush(fpc3);
                                                 write(p4[1],inbuf, 128);
                                         } // end else
-                                //      close p3[0],p4[1];
+                                     close p3[0],p4[1];
                                 } //end while
-        //              exit(0);
+                        exit(0);
                         }//end child 3
                         else {
                                 //continue child 2
-                        //      close p4[1],p4[0],p2[1],p3[0];
+                              close p4[1],p4[0],p2[1],p3[0];
                                 fpc2 = fopen ("child2log.txt", "w");
                                 p3= open ("mypipe", O_WRONLY);
                                 while(read (p2[0],inbuf, 128) > 0){
@@ -76,13 +76,13 @@ int main()
                                                 write (p3,inbuf, 128);
                                         }
                                 }// end while
-                        //      close p2[0],p3[1];
-                        //      exit(0);
+                              close p2[0],p3[1];
+                              exit(0);
                         } // end else
                 } // end if
                 else {
                         //child 1 process
-                //      close p1[1],p2[0],p4[1],p4[0];
+                      close p1[1],p2[0],p4[1],p4[0];
                         fpc1 = fopen("child1log.txt","w");
                         while (read (p1[0],inbuf, 128) > 0 ){
                                 sscanf(inbuf, "%d\t%s", &num, inbuf);
@@ -98,8 +98,8 @@ int main()
                                         write(p2[1],inbuf, 128);
                                 }
                         } // end while
-                //      close p1[0],p2[1];
-                //      exit(0); //terminate child 1
+                    close p1[0],p2[1];
+                      exit(0); //terminate child 1
                 }
 
         }
